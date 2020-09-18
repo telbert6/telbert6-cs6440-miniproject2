@@ -1,6 +1,9 @@
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
+import plotly.graph_objects as go
+from dash.dependencies import Input, Output
+
 
 import pandas as pd
 import json
@@ -78,7 +81,7 @@ app.layout = html.Div(
 @app.callback(Output('usmap', 'figure'),
               [Input('raceselector', 'value')])
 def update_race(selected_dropdown_value):
-    trace1 = []
+	trace1 = []
 
 	plot_df = pd.DataFrame(
 		conditions_by_county[conditions_by_county.Field == field]
