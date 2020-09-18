@@ -84,7 +84,7 @@ def update_race(selected_dropdown_value):
     trace1 = []
 
     plot_df = pd.DataFrame(
-        conditions_by_county[conditions_by_county.Field == field]
+        df[df.Field == field]
         .groupby("fipscd")
         .agg({"Cases": sum, "Patients": sum})
     ).reset_index()
