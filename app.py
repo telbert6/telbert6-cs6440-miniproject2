@@ -48,7 +48,7 @@ app.layout = html.Div([
 							 html.Div(
 								 className='div-for-dropdown',
 								 children=[
-									 dcc.Dropdown(id='raceselector', options=get_options(df['race'].unique()),
+									 dcc.Dropdown(id='raceselector', options=get_options(df['Race'].unique()),
 												  multi=True, value=[df['stock'].sort_values()[0]],
 												  style={'backgroundColor': '#1E1E1E'},
 												  className='raceselector'
