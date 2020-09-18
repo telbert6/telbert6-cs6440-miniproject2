@@ -39,18 +39,7 @@ app.layout = html.Div([
                              children=[
                                  html.H2('DASH - STOCK PRICES'),
                                  html.P('Visualising time series with Plotly - Dash.'),
-                                 html.P('Pick one or more stocks from the dropdown below.'),
-                                 html.Div(
-                                     className='div-for-dropdown',
-                                     children=[
-                                         dcc.Dropdown(id='raceselector', options=get_options(df['race'].unique()),
-                                                      multi=True, value=[df['stock'].sort_values()[0]],
-                                                      style={'backgroundColor': '#1E1E1E'},
-                                                      className='raceselector'
-                                                      ),
-                                     ],
-                                     style={'color': '#1E1E1E'})
-                                ]
+                                 html.P('Pick one or more stocks from the dropdown below.')
                              )
                  ]
 				)
