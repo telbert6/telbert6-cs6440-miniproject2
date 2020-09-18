@@ -4,18 +4,12 @@ import dash_html_components as html
 
 import pandas as pd
 import json
-import os
-import pprint
 
 from urllib.request import urlopen
 
 import matplotlib.pyplot as plt
 
 import plotly.express as px
-
-import dash
-import dash_html_components as html
-
 
 #df = pd.read_exel('agg.xlsx')
 
