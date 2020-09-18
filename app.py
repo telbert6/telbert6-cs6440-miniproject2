@@ -129,6 +129,9 @@ app.layout = html.Div(
 # Callback for timeseries price
 @app.callback(Output("usmap", "figure"), [Input("raceselector", "value")])
 def update_race(selected_dropdown_value):
+    app.logger.info('Running update on:')
+    app.logger.info(selected_dropdown_value)
+
     field = "SP_DEPRESSN"
     
     trace1 = []
@@ -155,6 +158,8 @@ def update_race(selected_dropdown_value):
         labels={"% of Patients": "% of Patients"},
     )
     fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
+
+    app.logger.info('Update Complete')
 
     return fig
 
