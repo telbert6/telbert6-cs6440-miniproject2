@@ -106,6 +106,8 @@ def update_race(selected_dropdown_value):
                 marker_line_width=0,
             )
         )
+		
+
     traces = [trace1]
     data = [val for sublist in traces for val in sublist]
     figure = {
