@@ -23,3 +23,4 @@ Werkzeug==1.0.1
 pandas
 plotly
 matplotlib
+xldr
