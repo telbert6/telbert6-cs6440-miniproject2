@@ -93,20 +93,38 @@ def update_race(selected_dropdown_value):
 
     plot_df["% of Patients"] = plot_df.Cases / plot_df.Patients
 
-    for stock in selected_dropdown_value:
-        trace1.append(
-            go.Choroplethmapbox(
-                geojson=counties,
-                locations=plot_df["fipscd"],
-                z=plot_df["% of Patients"],
-                colorscale="Viridis",
-                zmin=0,
-                zmax=12,
-                marker_opacity=0.5,
-                marker_line_width=0,
-            )
+    trace1.append(
+        go.Choroplethmapbox(
+            geojson=counties,
+            locations=plot_df["fipscd"],
+            z=plot_df["% of Patients"],
+            colorscale="Viridis",
+            zmin=0,
+            zmax=12,
+            marker_opacity=0.5,
+            marker_line_width=0,
         )
-		
+    )
+
+    fig = go.Figure(
+        go.Choroplethmapbox(
+            geojson=counties,
+            locations=plot_df["fipscd"],
+            z=plot_df["% of Patients"],
+            colorscale="Viridis",
+            zmin=0,
+            zmax=12,
+            marker_opacity=0.5,
+            marker_line_width=0,
+        )
+    )
+    fig.update_layout(
+        mapbox_style="carto-positron",
+        mapbox_zoom=3,
+        mapbox_center={"lat": 37.0902, "lon": -95.7129},
+    )
+    fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
+    
 
     traces = [trace1]
     data = [val for sublist in traces for val in sublist]
@@ -125,7 +143,7 @@ def update_race(selected_dropdown_value):
         ),
     }
 
-    return figure
+    return fig
 
 
 if __name__ == '__main__':
