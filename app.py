@@ -81,6 +81,8 @@ app.layout = html.Div(
 # Callback for timeseries price
 @app.callback(Output("usmap", "figure"), [Input("raceselector", "value")])
 def update_race(selected_dropdown_value):
+    field = "SP_DEPRESSN"
+    
     trace1 = []
 
     plot_df = pd.DataFrame(
