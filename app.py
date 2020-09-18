@@ -30,6 +30,13 @@ top_markdown_text = '''
 This is my first deployed app
 '''
 
+def get_options(list_stocks):
+    dict_list = []
+    for i in list_stocks:
+        dict_list.append({'label': i, 'value': i})
+
+    return dict_list
+
 app.layout = html.Div([
 	html.Div(className='row',
 			 children=[
