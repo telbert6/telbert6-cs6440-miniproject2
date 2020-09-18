@@ -120,8 +120,8 @@ def update_race(selected_dropdown_value):
             margin={"b": 15},
             hovermode="x",
             autosize=True,
-            title={"text": "Stock Prices", "font": {"color": "white"}, "x": 0.5},
-            xaxis={"range": [df_sub.index.min(), df_sub.index.max()]},
+            title={"text": "Stock Prices", "font": {"color": "white"}, "x": 0.5}#,
+            #xaxis={"range": [df_sub.index.min(), df_sub.index.max()]},
         ),
     }
 
