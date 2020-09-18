@@ -91,6 +91,8 @@ def update_race(selected_dropdown_value):
         .agg({"Cases": sum, "Patients": sum})
     ).reset_index()
 
+    plot_df["% of Patients"] = plot_df.Cases / plot_df.Patients
+
     for stock in selected_dropdown_value:
         trace1.append(
             go.Choroplethmapbox(
