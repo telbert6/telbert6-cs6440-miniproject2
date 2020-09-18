@@ -16,7 +16,7 @@ df = pd.read_exel('agg.xlsx')
 with urlopen(
     "https://raw.githubusercontent.com/plotly/datasets/master/geojson-counties-fips.json"
 ) as response:
-	counties = json.load(response)
+    counties = json.load(response)
 
 
 
@@ -31,9 +31,27 @@ This is my first deployed app
 '''
 
 app.layout = html.Div([
-
-	children=[
-		html.Div(className='row')
+	html.Div(className='row',
+			 children=[
+				html.Div(className='four columns div-user-controls',
+						 children=[
+							 html.H2('DASH - STOCK PRICES'),
+							 html.P('Visualising time series with Plotly - Dash.'),
+							 html.P('Pick one or more stocks from the dropdown below.'),
+							 html.Div(
+								 className='div-for-dropdown',
+								 children=[
+									 dcc.Dropdown(id='raceselector', options=get_options(df['race'].unique()),
+												  multi=True, value=[df['stock'].sort_values()[0]],
+												  style={'backgroundColor': '#1E1E1E'},
+												  className='raceselector'
+												  ),
+								 ],
+								 style={'color': '#1E1E1E'})
+							]
+						 )
+			 ]
+			)
 	
 	]
     #dcc.Markdown(children=top_markdown_text),
@@ -42,3 +60,10 @@ app.layout = html.Div([
 
 if __name__ == '__main__':
     app.run_server(debug=True)
+
+
+
+
+
+
+
