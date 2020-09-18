@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 
 import plotly.express as px
 
-df = pd.read_exel('agg.xlsx')
+df = pd.read_excel('agg.xlsx')
 
 with urlopen(
     "https://raw.githubusercontent.com/plotly/datasets/master/geojson-counties-fips.json"
