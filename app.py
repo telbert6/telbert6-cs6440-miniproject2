@@ -141,10 +141,10 @@ def update_race(selected_dropdown_value):
         .groupby("fipscd")
         .agg({"Cases": sum, "Patients": sum})
     ).reset_index()
-	
-	print(plot_df.shape, file=sys.stderr)
-	print(plot_df, file=sys.stderr)
 
+    print(plot_df.shape, file=sys.stderr)
+    print(plot_df, file=sys.stderr)
+    
     plot_df["% of Patients"] = plot_df.Cases / plot_df.Patients
 
     fig = px.choropleth_mapbox(
