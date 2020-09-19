@@ -144,6 +144,8 @@ def update_race(selected_dropdown_value):
 
     print(plot_df.shape, file=sys.stderr)
     print(plot_df, file=sys.stderr)
+    print(len(plot_df.State.unique()), file=sys.stderr)
+    print(plot_df[plot_df.State == 'CA'], file=sys.stderr)
     
     plot_df["% of Patients"] = plot_df.Cases / plot_df.Patients
 
