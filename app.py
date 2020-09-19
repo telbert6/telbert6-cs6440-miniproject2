@@ -130,23 +130,24 @@ app.layout = html.Div(
 # Callback for timeseries price
 @app.callback(Output("usmap", "figure"), [Input("raceselector", "value")])
 def update_race(selected_dropdown_value):
-    print(f'Running update on: {selected_dropdown_value}', file=sys.stderr)
+    print(f"Running update on: {selected_dropdown_value}", file=sys.stderr)
 
     field = "SP_DEPRESSN"
-    
+
     trace1 = []
 
     plot_df = pd.DataFrame(
-        df[(df.Field == field) & df.Race.apply(lambda race: race in selected_dropdown_value)]
-        .groupby("fipscd")
+        df[
+            (df.Field == field)
+            & df.Race.apply(lambda race: race in selected_dropdown_value)
+        ]
+        .groupby(["fipscd", "State", "County"])
         .agg({"Cases": sum, "Patients": sum})
     ).reset_index()
 
     print(plot_df.shape, file=sys.stderr)
     print(plot_df, file=sys.stderr)
-    print(len(plot_df.State.unique()), file=sys.stderr)
-    print(plot_df[plot_df.State == 'CA'], file=sys.stderr)
-    
+
     plot_df["% of Patients"] = plot_df.Cases / plot_df.Patients
 
     fig = px.choropleth_mapbox(
@@ -164,9 +165,7 @@ def update_race(selected_dropdown_value):
     )
     fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
 
-    print(f'Update complete', file=sys.stderr)
-
-    return fig
+    print(f"Update complete", file=sys.stderr)
 
 
 if __name__ == '__main__':
