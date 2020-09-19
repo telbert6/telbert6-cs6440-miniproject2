@@ -89,7 +89,7 @@ app.layout = html.Div(
 										options=get_options(df["Race"].unique()),
 										multi=True,
 										value=list(df["Race"].unique()),
-										style={"backgroundColor": "#1E1E1E"},
+										#style={"backgroundColor": "#1E1E1E"},
 									)
 								], className="three columns div-user-controls"),
 								html.Div([
@@ -115,6 +115,15 @@ app.layout = html.Div(
 										multi=False,
 										value="All"
 									)
+								], className="three columns div-user-controls"),
+								html.Div([
+									html.P('Condition:'),
+									dcc.Dropdown(
+										id="conditionselector",
+										options=get_options(df["Field"].unique()),
+										multi=False,
+										value="All"
+									)
 								], className="three columns div-user-controls")
 							]
 						),
@@ -131,17 +140,35 @@ app.layout = html.Div(
 				html.Div(
 					[
 						dcc.Graph(
-							id="race_pie", 
+							id="sex_patient_pie", 
+							config={"displayModeBar": False},
+							className="four columns div-for-charts bg-grey"
+						),
+						dcc.Graph(
+							id="sex_case_pie", 
+							config={"displayModeBar": False},
+							className="four columns div-for-charts bg-grey"
+						)
+					],
+					className="twelve columns div-for-charts bg-grey"
+				),
+				html.Div(
+					[
+						dcc.Graph(
+							id="race_patient_pie", 
 							config={"displayModeBar": False}
 							,
 							className="four columns div-for-charts bg-grey"
 						),
 						dcc.Graph(
-							id="sex_pie", 
-							config={"displayModeBar": False},
+							id="race_case_pie", 
+							config={"displayModeBar": False}
+							,
 							className="four columns div-for-charts bg-grey"
-						)
-					]
+						),
+						
+					],
+					className="twelve columns div-for-charts bg-grey"
 				)
 			],
 			className="twelve columns div-for-charts bg-grey"
@@ -154,19 +181,18 @@ app.layout = html.Div(
 @app.callback(
 	
 	Output("usmap", "figure"), 
-	Output("race_pie", "figure"),
-	Output("sex_pie", "figure"),
+	Output("race_patient_pie", "figure"),
+	Output("race_case_pie", "figure"),
+	Output("sex_patient_pie", "figure"),
+	Output("sex_case_pie", "figure"),
 	[
 		Input("raceselector", "value"), 
 		Input("sexselector", "value"),
 		Input("stateselector", "value"),
+		Input("conditionselector", "value")
 	]
 )
-def update_map(race_values, sex_value, state_value):
-	print(f"Running update on: {race_values}, {sex_value}, {state_value}", file=sys.stderr)
-
-	field = "SP_DEPRESSN"
-
+def update_map(race_values, sex_value, state_value, condition_value):
 	all_race = "All" in race_values
 	all_sex = "All" == sex_value
 	all_states = "All" == state_value
@@ -177,7 +203,7 @@ def update_map(race_values, sex_value, state_value):
 
 
 	filtered_df = df[
-			(df.Field == field)
+			df.Field.apply(lambda condition: condition == condition_value)
 			& df.Race.apply(lambda race: all_race or race in race_values)
 			& df.Sex.apply(lambda sex: all_sex or sex == sex_value)
 			& df.State.apply(lambda state: all_states or state == state_value)
@@ -187,7 +213,7 @@ def update_map(race_values, sex_value, state_value):
 	map_plot_df = pd.DataFrame(
 		filtered_df
 		.groupby(["fipscd", "State", "County"])
-		.agg({"Cases": sum, "Patients": sum})
+		.agg({"Cases": sum, "Patients": lambda x: sum(x)})
 	).reset_index()
 	map_plot_df["% of Patients"] = round(map_plot_df.Cases / map_plot_df.Patients * 100, 1)
 	print(map_plot_df.shape, file=sys.stderr)
@@ -215,7 +241,13 @@ def update_map(race_values, sex_value, state_value):
 		.groupby(["Race"])
 		.agg({"Cases": sum, "Patients": sum})
 	).reset_index()
-	race_pie_fig = px.pie(
+	race_patient_pie_fig = px.pie(
+		race_pie_plot_df, 
+		values='Patients', 
+		names='Race', 
+		title='Total Patients by Race'
+	)
+	race_case_pie_fig = px.pie(
 		race_pie_plot_df, 
 		values='Cases', 
 		names='Race', 
@@ -223,12 +255,19 @@ def update_map(race_values, sex_value, state_value):
 	)
 	
 	
+	
 	sex_pie_plot_df = pd.DataFrame(
 		filtered_df
 		.groupby(["Sex"])
 		.agg({"Cases": sum, "Patients": sum})
 	).reset_index()
-	sex_pie_fig = px.pie(
+	sex_patient_pie_fig = px.pie(
+		sex_pie_plot_df, 
+		values='Patients', 
+		names='Sex', 
+		title='Total Patients by Sex'
+	)
+	sex_case_pie_fig = px.pie(
 		sex_pie_plot_df, 
 		values='Cases', 
 		names='Sex', 
@@ -236,7 +275,7 @@ def update_map(race_values, sex_value, state_value):
 	)
 	
 	
-	return fig_map, race_pie_fig, sex_pie_fig
+	return fig_map, race_patient_pie_fig, race_case_pie_fig, sex_patient_pie_fig, sex_case_pie_fig
 
 
 if __name__ == '__main__':
