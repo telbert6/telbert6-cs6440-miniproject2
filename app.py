@@ -206,18 +206,21 @@ app.layout = html.Div(
 	]
 )
 def update_map(race_values, sex_value, state_value, condition_value):
-	all_race = "All" in race_values
+	#all_race = "All" in race_values
 	all_sex = "All" == sex_value
 	all_states = "All" == state_value
 	
-	print(f"All filters: {all_race}, {all_sex}", file=sys.stderr)
+	if len(race_values) == 0:
+		race_values = ["White", "Black", "Hispanic", "Other"]
+	
+	#print(f"All filters: {all_race}, {all_sex}", file=sys.stderr)
 
 	trace1 = []
 
 
 	filtered_df = df[
 			df.Field.apply(lambda condition: condition == condition_value)
-			& df.Race.apply(lambda race: all_race or race in race_values)
+			& df.Race.apply(lambda race: race in race_values)
 			& df.Sex.apply(lambda sex: all_sex or sex == sex_value)
 			& df.State.apply(lambda state: all_states or state == state_value)
 			& (df.Patients >= 5)
@@ -229,7 +232,7 @@ def update_map(race_values, sex_value, state_value, condition_value):
 		.agg({"Cases": sum, "Patients": lambda x: sum(x)})
 	).reset_index()
 	map_plot_df["% of Patients"] = round(map_plot_df.Cases / map_plot_df.Patients * 100, 1)
-	print(map_plot_df.shape, file=sys.stderr)
+	
 	
 	fig_map = px.choropleth_mapbox(
 		map_plot_df,
@@ -253,25 +256,48 @@ def update_map(race_values, sex_value, state_value, condition_value):
 		filtered_df
 		.groupby(["Race"])
 		.agg({"Cases": sum, "Patients": sum, "Total Expense":sum})
-	).reset_index()
+	)
+	
+	race_pie_plot_df = race_pie_plot_df.loc[
+		[
+			race
+			for race in ["White", "Black", "Hispanic", "Other"]
+			if race in list(race_pie_plot_df.index)
+		]
+	].reset_index()
 	race_pie_plot_df['Average Expense Per Case'] = round(race_pie_plot_df['Total Expense'] / race_pie_plot_df['Cases'], 2)
-	race_patient_pie_fig = px.pie(
-		race_pie_plot_df, 
-		values='Patients', 
-		names='Race', 
-		title='Total Patients by Race'
+	race_patient_pie_fig = go.Figure(
+		data = [
+			go.Pie( 
+				#race_pie_plot_df, 
+				values=race_pie_plot_df['Patients'], 
+				labels=race_pie_plot_df['Race'], 
+				title='Total Patients by Race',
+				sort=False
+			)
+		]
 	)
-	race_case_pie_fig = px.pie(
-		race_pie_plot_df, 
-		values='Cases', 
-		names='Race', 
-		title='Cases by Race'
+	race_case_pie_fig = go.Figure(
+		data = [
+			go.Pie(
+				#race_pie_plot_df, 
+				values=race_pie_plot_df['Cases'], 
+				labels=race_pie_plot_df['Race'],
+				title='Cases by Race',
+				sort=False
+			)
+		]
 	)
-	race_expense_pie_fig = px.pie(
-		race_pie_plot_df, 
-		values='Average Expense Per Case', 
-		names='Race', 
-		title='Average Expense per Visit'
+	race_expense_pie_fig = go.Figure(
+		data = [
+			go.Pie(
+				#race_pie_plot_df,  
+				values=race_pie_plot_df['Average Expense Per Case'], 
+				labels=race_pie_plot_df['Race'],
+				title='Average Expense per Visit',
+				sort=False
+			)
+		]
 	)
 	
 	
@@ -280,25 +306,47 @@ def update_map(race_values, sex_value, state_value, condition_value):
 		filtered_df
 		.groupby(["Sex"])
 		.agg({"Cases": sum, "Patients": sum, "Total Expense":sum})
-	).reset_index()
+	)
+	sex_pie_plot_df = sex_pie_plot_df.loc[
+		[
+			sex
+			for sex in ["Female", "Male"]
+			if sex in list(sex_pie_plot_df.index)
+		]
+	].reset_index()
 	sex_pie_plot_df['Average Expense Per Case'] = round(sex_pie_plot_df['Total Expense'] / sex_pie_plot_df['Cases'], 2)
-	sex_patient_pie_fig = px.pie(
-		sex_pie_plot_df, 
-		values='Patients', 
-		names='Sex', 
-		title='Total Patients by Sex'
+	sex_patient_pie_fig = go.Figure(
+		data = [
+			go.Pie(
+				#sex_pie_plot_df, 
+				values=sex_pie_plot_df['Patients'], 
+				labels=sex_pie_plot_df['Sex'],
+				title='Total Patients by Sex',
+				sort=False
+			)
+		]
 	)
-	sex_case_pie_fig = px.pie(
-		sex_pie_plot_df, 
-		values='Cases', 
-		names='Sex', 
-		title='Cases by Sex'
+	sex_case_pie_fig = go.Figure(
+		data = [
+			go.Pie(
+				#sex_pie_plot_df, 
+				values=sex_pie_plot_df['Cases'], 
+				labels=sex_pie_plot_df['Sex'],
+				title='Cases by Sex',
+				sort=False
+			)
+		]
 	)
-	sex_expense_pie_fig = px.pie(
-		sex_pie_plot_df, 
-		values='Average Expense Per Case', 
-		names='Sex', 
-		title='Average Expense'
+	sex_expense_pie_fig = go.Figure(
+		data = [
+			go.Pie(
+				#sex_pie_plot_df, 
+				values=sex_pie_plot_df['Average Expense Per Case'], 
+				labels=sex_pie_plot_df['Sex'], 
+				title='Average Expense',
+				sort=False
+			)
+		]
 	)
 	
 	
