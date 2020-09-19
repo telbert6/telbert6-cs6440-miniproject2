@@ -4,6 +4,7 @@ import dash_html_components as html
 import plotly.graph_objects as go
 from dash.dependencies import Input, Output
 
+import sys
 
 import pandas as pd
 import json
@@ -77,7 +78,6 @@ app.layout = html.Div(
     # dcc.Markdown(children=top_markdown_text),
 )
 
-
 def get_options(list_stocks):
     dict_list = []
     for i in list_stocks:
@@ -104,7 +104,7 @@ app.layout = html.Div(
                                     id="raceselector",
                                     options=get_options(df["Race"].unique()),
                                     multi=True,
-                                    value=[df["Race"].sort_values()[0]],
+                                    value=list(df["Race"].unique()),
                                     style={"backgroundColor": "#1E1E1E"},
                                     className="raceselector",
                                 ),
@@ -126,18 +126,18 @@ app.layout = html.Div(
 )
 
 
+
 # Callback for timeseries price
 @app.callback(Output("usmap", "figure"), [Input("raceselector", "value")])
 def update_race(selected_dropdown_value):
-    app.logger.info('Running update on:')
-    app.logger.info(selected_dropdown_value)
+    print(f'Running update on: {selected_dropdown_value}', file=sys.stderr)
 
     field = "SP_DEPRESSN"
     
     trace1 = []
 
     plot_df = pd.DataFrame(
-        df[df.Field == field & df.Race.apply(lambda race: race in selected_dropdown_value)]
+        df[(df.Field == field) & df.Race.apply(lambda race: race in selected_dropdown_value)]
         .groupby("fipscd")
         .agg({"Cases": sum, "Patients": sum})
     ).reset_index()
@@ -159,7 +159,7 @@ def update_race(selected_dropdown_value):
     )
     fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
 
-    app.logger.info('Update Complete')
+    print(f'Update complete', file=sys.stderr)
 
     return fig
 
