@@ -148,6 +148,11 @@ app.layout = html.Div(
 							id="sex_case_pie", 
 							config={"displayModeBar": False},
 							className="four columns div-for-charts bg-grey"
+						),
+						dcc.Graph(
+							id="sex_expense_pie", 
+							config={"displayModeBar": False},
+							className="four columns div-for-charts bg-grey"
 						)
 					],
 					className="twelve columns div-for-charts bg-grey"
@@ -162,6 +167,12 @@ app.layout = html.Div(
 						),
 						dcc.Graph(
 							id="race_case_pie", 
+							config={"displayModeBar": False}
+							,
+							className="four columns div-for-charts bg-grey"
+						),
+						dcc.Graph(
+							id="race_expense_pie", 
 							config={"displayModeBar": False}
 							,
 							className="four columns div-for-charts bg-grey"
@@ -183,8 +194,10 @@ app.layout = html.Div(
 	Output("usmap", "figure"), 
 	Output("race_patient_pie", "figure"),
 	Output("race_case_pie", "figure"),
+	Output("race_expense_pie", "figure"),
 	Output("sex_patient_pie", "figure"),
 	Output("sex_case_pie", "figure"),
+	Output("sex_expense_pie", "figure"),
 	[
 		Input("raceselector", "value"), 
 		Input("sexselector", "value"),
@@ -239,8 +252,9 @@ def update_map(race_values, sex_value, state_value, condition_value):
 	race_pie_plot_df = pd.DataFrame(
 		filtered_df
 		.groupby(["Race"])
-		.agg({"Cases": sum, "Patients": sum})
+		.agg({"Cases": sum, "Patients": sum, "Total Expense":sum})
 	).reset_index()
+	race_pie_plot_df['Average Expense Per Case'] = round(race_pie_plot_df['Total Expense'] / race_pie_plot_df['Cases'], 2)
 	race_patient_pie_fig = px.pie(
 		race_pie_plot_df, 
 		values='Patients', 
@@ -253,14 +267,21 @@ def update_map(race_values, sex_value, state_value, condition_value):
 		names='Race', 
 		title='Cases by Race'
 	)
+	race_expense_pie_fig = px.pie(
+		race_pie_plot_df, 
+		values='Average Expense Per Case', 
+		names='Race', 
+		title='Average Expense per Visit'
+	)
 	
 	
 	
 	sex_pie_plot_df = pd.DataFrame(
 		filtered_df
 		.groupby(["Sex"])
-		.agg({"Cases": sum, "Patients": sum})
+		.agg({"Cases": sum, "Patients": sum, "Total Expense":sum})
 	).reset_index()
+	sex_pie_plot_df['Average Expense Per Case'] = round(sex_pie_plot_df['Total Expense'] / sex_pie_plot_df['Cases'], 2)
 	sex_patient_pie_fig = px.pie(
 		sex_pie_plot_df, 
 		values='Patients', 
@@ -273,9 +294,15 @@ def update_map(race_values, sex_value, state_value, condition_value):
 		names='Sex', 
 		title='Cases by Sex'
 	)
+	sex_expense_pie_fig = px.pie(
+		sex_pie_plot_df, 
+		values='Average Expense Per Case', 
+		names='Sex', 
+		title='Average Expense'
+	)
 	
 	
-	return fig_map, race_patient_pie_fig, race_case_pie_fig, sex_patient_pie_fig, sex_case_pie_fig
+	return fig_map, race_patient_pie_fig, race_case_pie_fig, race_expense_pie_fig, sex_patient_pie_fig, sex_case_pie_fig, sex_expense_pie_fig
 
 
 if __name__ == '__main__':
