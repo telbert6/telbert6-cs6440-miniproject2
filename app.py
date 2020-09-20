@@ -294,7 +294,7 @@ def update_map(race_values, sex_value, state_value, condition_value):
 				#race_pie_plot_df,  
 				values=race_pie_plot_df['Average Expense Per Case'], 
 				labels=race_pie_plot_df['Race'],
-				title='Average Expense per Visit',
+				title='Average Expense per Visit by Race',
 				sort=False
 			)
 		]
@@ -343,7 +343,7 @@ def update_map(race_values, sex_value, state_value, condition_value):
 				#sex_pie_plot_df, 
 				values=sex_pie_plot_df['Average Expense Per Case'], 
 				labels=sex_pie_plot_df['Sex'], 
-				title='Average Expense',
+				title='Average Expense Per Visit by Sex',
 				sort=False
 			)
 		]
